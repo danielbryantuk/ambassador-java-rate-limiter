@@ -13,8 +13,8 @@ import pb.lyft.ratelimit.RateLimitServiceGrpc;
 import pb.lyft.ratelimit.Ratelimit;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class RateLimitServer {
@@ -69,12 +69,12 @@ public class RateLimitServer {
 
     private static class RateLimiterImpl extends RateLimitServiceGrpc.RateLimitServiceImplBase {
 
-        private Map<String, Bucket> serviceBuckets = new HashMap<>();
+        private Map<String, Bucket> serviceBuckets = new ConcurrentHashMap<>();
 
         @Override
         public void shouldRateLimit(Ratelimit.RateLimitRequest rateLimitRequest, StreamObserver<Ratelimit.RateLimitResponse> responseStreamObserver) {
             logDebug(rateLimitRequest);
-            String destServiceName = extractServiceNameFrom(rateLimitRequest);
+            String destServiceName = extractDestServiceNameFrom(rateLimitRequest);
             Bucket bucket = getServiceBucketFor(destServiceName);
 
             Ratelimit.RateLimitResponse.Code code;
@@ -102,7 +102,9 @@ public class RateLimitServer {
             }
         }
 
-        private String extractServiceNameFrom(Ratelimit.RateLimitRequest rateLimitRequest) {
+        private String extractDestServiceNameFrom(Ratelimit.RateLimitRequest rateLimitRequest) {
+            // we're making the assumption that the dest(ination) service name
+            // will always be in this position
             return rateLimitRequest.getDescriptors(0).getEntries(1).getValue();
         }
 
