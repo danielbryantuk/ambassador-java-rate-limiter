@@ -12,7 +12,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <log4j2.version>2.11.0</log4j2.version>
+        <log4j2.version>2.15.0</log4j2.version>
         <grpc.version>1.11.0</grpc.version>
         <netty.tcnative.version>2.0.7.Final</netty.tcnative.version>
     </properties>
